@@ -52,6 +52,10 @@ const handleCommand = (command) => {
 	} else if (command === 'resetPassword') {
 		dialogResetPasswordVisible.value = true
 		userPassword.value ={}
+	}else if (command === 'info'){
+		dialogUpdateUserInfoVisible.value = true
+		//user.value = userInfoStore.user
+		Object.assign(user.value, userInfoStore.user)
 	}else {
 		//路由
 		router.push('/' + command)
@@ -91,11 +95,58 @@ const rules = ref({
 		{validator: rePasswordValid, trigger: 'blur'}
 	]
 })
-const resetPassword = () => {
-	userApi.resetPassword(userPassword.value).then(result => {
+
+//条例验证相关
+const ruleFormRef = ref()
+const resetPassword = (formEl) => {
+	if (!formEl) return
+	formEl.validate((valid) => {
+		if (valid) {
+			console.log('submit!')
+			userApi.resetPassword(userPassword.value).then(result => {
+				if (result.code === 0) {
+					ElMessage({message: result.msg, type: 'success',})
+					dialogResetPasswordVisible.value = false
+				} else {
+					ElMessage.error(result.msg)
+				}
+			})
+		} else {
+			console.log('error submit!')
+		}
+	})
+}
+//信息
+import {useUserInfoStore} from "@/store/userInfoStore.js"
+const userInfoStore = useUserInfoStore()
+const getUserInfo = () => {
+	userApi.userAllInfo().then(result => {
+		if (result.code == 0) {
+			userInfoStore.setUserInfo(result.data)
+		}
+	})
+}
+
+getUserInfo()
+const dialogUpdateUserInfoVisible = ref(false)
+const user = ref({})
+
+const headers = ref({
+	//添加token
+	Authorization: tokenStore.token
+})
+
+const handleAvatarSuccess = (result) => {
+	user.value.image = result.data
+}
+
+const updateUserInfo = () => {
+	userApi.update(user.value).then(result => {
 		if (result.code === 0) {
 			ElMessage({message: result.msg, type: 'success',})
-			dialogResetPasswordVisible.value = false
+			dialogUpdateUserInfoVisible.value = false
+			//重新加载最新数据
+			getUserInfo()
 		} else {
 			ElMessage.error(result.msg)
 		}
@@ -161,7 +212,7 @@ const resetPassword = () => {
 				<!-- command: 条目被点击后会触发,在事件函数上可以声明一个参数,接收条目对应的指令 -->
 				<el-dropdown placement="bottom-end" @command="handleCommand">
                     <span class="el-dropdown__box">
-                        <el-avatar :src="avatar"/>
+                        <el-avatar :src="userInfoStore.user.image?userInfoStore.user.image:avatar"/>
                     </span>
 					<template #dropdown>
 						<el-dropdown-menu>
@@ -183,24 +234,56 @@ const resetPassword = () => {
 			<el-footer> ©2024 Created by Sun</el-footer>
 		</el-container>
 	</el-container>
-	
-<!--+++++++++++++++++++++++++++会话-->
-	<el-dialog v-model="dialogResetPasswordVisible" title="Reset Password" width="500" :lock-scroll="false">
-		<el-form :rules="rules" :model="userPassword">
+	<!--+++++++++++++++++++++++++++信息会话-->
+	<el-dialog v-model="dialogUpdateUserInfoVisible" title="修改基本信息" width="500" :lock-scroll="false">
+		<el-form :model="user">
+			<el-form-item label="名字" :label-width="60">
+				<el-input v-model="user.name" autocomplete="off"/>
+			</el-form-item>
+			<el-form-item label="性别" :label-width="60">
+				<el-input v-model="user.gender" autocomplete="off"/>
+			</el-form-item>
+			<el-form-item label="头像" :label-width="60">
+				<el-upload
+						class="avatar-uploader"
+						action="/api/upload"
+						:show-file-list="false"
+						:on-success="handleAvatarSuccess"
+						:headers="headers"
+				>
+					<img v-if="user.image" :src="user.image" class="avatar"/>
+					<el-icon v-else class="avatar-uploader-icon">
+						<Plus/>
+					</el-icon>
+				</el-upload>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dialogUpdateUserInfoVisible = false">取消</el-button>
+				<el-button type="primary" @click="updateUserInfo">
+					确认
+				</el-button>
+			</div>
+		</template>
+	</el-dialog>
+<!--+++++++++++++++++++++++++++修改密码会话-->
+	<el-dialog  v-model="dialogResetPasswordVisible" title="Reset Password" width="500" :lock-scroll="false">
+		<el-form :rules="rules" :model="userPassword" ref="ruleFormRef">
 			<el-form-item prop="oldPassword" label="Original Password" :label-width="150">
 				<el-input v-model="userPassword.oldPassword" autocomplete="off"/>
 			</el-form-item>
 			<el-form-item prop="newPassword" label="New Password" :label-width="150">
 				<el-input v-model="userPassword.newPassword" autocomplete="off"/>
 			</el-form-item>
-			<el-form-item prop="reNewPassword" label="Re New Password" :label-width="150">
+			<el-form-item prop="reNewPassword" label="Confirm" :label-width="150">
 				<el-input v-model="userPassword.reNewPassword" autocomplete="off"/>
 			</el-form-item>
 		</el-form>
 		<template #footer>
 			<div class="dialog-footer">
 				<el-button @click="dialogResetPasswordVisible = false">取消</el-button>
-				<el-button type="primary" @click="resetPassword">
+				<el-button type="primary" @click="resetPassword(ruleFormRef)">
 					确认
 				</el-button>
 			</div>
@@ -209,6 +292,11 @@ const resetPassword = () => {
 </template>
 
 <style lang="scss" scoped>
+.avatar-uploader .avatar {
+	width: 178px;
+	height: 178px;
+	display: block;
+}
 .layout-container {
 	height: 100vh;
 	

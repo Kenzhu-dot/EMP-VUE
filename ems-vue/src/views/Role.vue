@@ -22,16 +22,19 @@ const handleClickEdit =(id)=>{
 	drawer.value = true
 	roleApi.edit(id).then(res => {
 		authVOs.value=res.data;
+		console.log(authVOs.value)
 	})
 }
-
 //修改成员权限
-
+const changeFlag = ref(false)
 const roleId=ref(0)
 const handleClose = ()=>{
 	roleApi.updateMid(roleId.value , authVOs.value).then(res=>{
 		if(res.code === 0){
-			ElMessage.success(res.msg)
+			if (changeFlag.value){
+				ElMessage.success(res.msg)
+			}
+			drawer.value=false
 		}
 	})
 }
@@ -40,10 +43,10 @@ const handleClose = ()=>{
 </script>
 
 <template>
-	<el-table :data="roleList" style="width: 100%">
-		<el-table-column fixed prop="id" label="ID" width="150" />
-		<el-table-column prop="name" label="Name" width="150" />
-		<el-table-column fixed="right" label="Operations" min-width="120">
+	<el-table :data="roleList" :table-layout="fixed" size="large">
+		<el-table-column fixed prop="id" label="ID"  />
+		<el-table-column prop="name" label="Name" />
+		<el-table-column fixed="right" label="Operations" >
 			<template #default="{row}">
 				<el-button link type="primary" size="small" @click="handleClickEdit(row.id)">Edit</el-button>
 			</template>
@@ -69,6 +72,7 @@ const handleClose = ()=>{
 							inline-prompt
 							:active-icon="Check"
 							:inactive-icon="Close"
+							@change="changeFlag = true"
 					/>
 				</template>
 			</el-table-column>

@@ -8,7 +8,7 @@ const roleApi = {
         return request.post(`/role/edit/${id}`)
     },
     updateMid(id , authVO) {
-        return request.put(`/role/edit/${id}` , authVO)
+        return request.put(`/role/updateMid/${id}` , authVO)
     }
 }
 

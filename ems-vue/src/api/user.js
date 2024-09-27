@@ -30,6 +30,9 @@ const userApi = {
     },
     resetPassword(userPassword){
         return request.put(`/user/resetPassword` , userPassword)
+    },
+    userAllInfo(){
+        return request.get('/user/allInfo')
     }
 }
 
