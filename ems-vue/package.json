@@ -1,0 +1,27 @@
+{
+  "name": "ems-vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.3",
+    "js-cookie": "^3.0.5",
+    "pinia": "^2.2.2",
+    "pinia-persistedstate-plugin": "^0.1.0",
+    "pinia-plugin-persistedstate": "^4.0.2",
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "sass-embedded": "^1.79.3",
+    "vite": "^5.3.1"
+  }
+}
