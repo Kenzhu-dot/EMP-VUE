@@ -6,6 +6,7 @@ import Layout from '@/views/Layout.vue'
 import Login from '@/views/Login.vue'
 import Emp from '@/views/Emp.vue'
 import Role from '@/views/Role.vue'
+import Project from '@/views/Project.vue'
 
 //创建路由器
 const router = createRouter({
@@ -15,7 +16,8 @@ const router = createRouter({
         {
             path: '/', component: Layout, children: [
                 {path: '/emp', component: Emp},
-                {path: '/role', component: Role}
+                {path: '/role', component: Role},
+                {path:'/project' , component:Project}
             ]
         }
     ]
