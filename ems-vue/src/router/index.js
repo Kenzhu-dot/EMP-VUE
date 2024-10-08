@@ -7,6 +7,8 @@ import Login from '@/views/Login.vue'
 import Emp from '@/views/Emp.vue'
 import Role from '@/views/Role.vue'
 import Project from '@/views/Project.vue'
+import Auth from "@/views/Auth.vue";
+import Charts from "@/views/Charts.vue";
 
 //创建路由器
 const router = createRouter({
@@ -17,7 +19,9 @@ const router = createRouter({
             path: '/', component: Layout, children: [
                 {path: '/emp', component: Emp},
                 {path: '/role', component: Role},
-                {path:'/project' , component:Project}
+                {path:'/project' , component:Project},
+                {path:'/auth', component:Auth},
+                {path:'/charts', component:Charts},
             ]
         }
     ]

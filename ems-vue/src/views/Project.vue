@@ -1,5 +1,5 @@
 <script setup>
-import {Download, Search, Plus, Upload, Delete} from "@element-plus/icons-vue";
+import {Download, Search, Plus, Upload, Delete, Check, Close} from "@element-plus/icons-vue";
 import {projectApi} from "@/api/project.js";
 import {ref, reactive} from "vue";
 import {ElMessage} from 'element-plus'
@@ -8,6 +8,8 @@ const projectQuery = reactive({
 	id :"",
 	name: "",
 	projectTeamId: "",
+	beginEndTime:"",
+	endEndTime:"",
 	page: 1,
 	limit: 7,
 })
@@ -125,12 +127,14 @@ const loadTeam = ()=>{
 	})
 }
 loadTeam()
+//表格内信息相关
 
 </script>
 
 <template>
 	<el-card shadow="hover">
 		<template #header >
+			<el-row>
 				<el-button type="primary" @click="showAdd" :icon="Plus" plain> </el-button>
 				<el-button @click="deleteAll" type="danger" :icon="Delete" plain></el-button>
 				<el-button @click="exportExcel" type="success" :icon="Download" plain>ExportExcel</el-button>
@@ -138,7 +142,7 @@ loadTeam()
 						class="inline-block"
 						method="post"
 						action="/api/project/importExcel"
-						style="margin-left: 10px"
+						style="display: inline-block ; margin-left: 10px"
 						accept=".xlsx,.xls"
 						:show-file-list="false"
 						:on-success="success"
@@ -146,6 +150,7 @@ loadTeam()
 						name="file">
 					<el-button type="success" :icon="Upload" plain>ImportExcel</el-button>
 				</el-upload>
+			</el-row>
 		</template>
 		<el-form :inline="true">
 			<el-form-item label="ID">
@@ -161,6 +166,30 @@ loadTeam()
 				</el-select>
 			</el-form-item>
 			<el-form-item>
+				<div class="block">
+					<el-date-picker
+							v-model="projectQuery.beginEndTime"
+							type="datetime"
+							placeholder="Pick the Begin of UpdateTime"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							date-format="MMM DD, YYYY"
+							time-format="HH:mm"
+					/>
+				</div>
+			</el-form-item>
+			<el-form-item>
+				<div class="block">
+					<el-date-picker
+							v-model="projectQuery.endEndTime"
+							type="datetime"
+							placeholder="Pick the Begin of UpdateTime"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							date-format="MMM DD, YYYY"
+							time-format="HH:mm"
+					/>
+				</div>
+			</el-form-item>
+			<el-form-item>
 				<el-button @click="onSearch" type="primary"><el-icon><Search /></el-icon></el-button>
 			</el-form-item>
 		</el-form>
@@ -171,7 +200,6 @@ loadTeam()
 			<el-table-column prop="name" label="Name" width="150"/>
 			<el-table-column prop="projectProgress" label="Progress" width="150"/>
 			<el-table-column prop="projectSize" label="Size" width="150"/>
-			<el-table-column prop="status" label="Status" width="150"/>
 			<el-table-column prop="createTime" label="CreateTime" width="150"/>
 			<el-table-column prop="endTime" label="EndTime" width="150"/>
 			<el-table-column prop="teamName" label="ProjectTeam" width="150"/>
@@ -198,7 +226,7 @@ loadTeam()
 	
 	
 <!--	添加和编辑-->
-	<el-dialog v-model="centerDialogVisible" :title="title" width="500" center>
+	<el-dialog v-model="centerDialogVisible" :title="title" width="500" center :lock-scroll="false">
 		<el-form :inline="true" v-model="project">
 			<el-form-item label="Name" :label-width="60">
 				<el-input v-model="project.name" autocomplete="off" />
@@ -218,6 +246,21 @@ loadTeam()
 							:value="item.id"
 					/>
 				</el-select>
+			</el-form-item>
+			<el-form-item label="Size" :label-width="60">
+				<el-input v-model="project.projectSize" autocomplete="off" />
+			</el-form-item>
+			<el-form-item label="EndTime">
+				<div class="block">
+					<el-date-picker
+							v-model="project.endTime"
+							type="datetime"
+							placeholder="Pick the Begin of UpdateTime"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							date-format="MMM DD, YYYY"
+							time-format="HH:mm"
+					/>
+				</div>
 			</el-form-item>
 		</el-form>
 		<template #footer >

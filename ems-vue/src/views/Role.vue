@@ -19,6 +19,7 @@ const drawer=ref(false)
 const authVOs = ref([])
 const handleClickEdit =(id)=>{
 	roleId.value = id
+	changeFlag.value=false
 	drawer.value = true
 	roleApi.edit(id).then(res => {
 		authVOs.value=res.data;
@@ -59,6 +60,7 @@ const handleClose = ()=>{
 			title="Auth"
 			:direction="'rtl'"
 			:before-close="handleClose"
+			:lockScroll="false"
 	>
 		<el-table :data="authVOs" style="width: 100%">
 			<el-table-column prop="name" label="Name" width="180" />

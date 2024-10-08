@@ -20,7 +20,6 @@ const tokenStore = useTokenStore();
 const router = useRouter();
 import {ElMessage, ElMessageBox} from 'element-plus'
 
-
 //更新左侧导航栏
 const pathList=ref([])
 const loadLeft=()=>{
@@ -43,6 +42,7 @@ const handleCommand = (command) => {
 				}
 		).then(()=>{
 			tokenStore.removeToken();
+			userInfoStore.removeUserInfo();
 			// 跳转到登录
 			ElMessage.success("退出成功")
 			router.push('/login')
@@ -95,7 +95,6 @@ const rules = ref({
 		{validator: rePasswordValid, trigger: 'blur'}
 	]
 })
-
 //条例验证相关
 const ruleFormRef = ref()
 const resetPassword = (formEl) => {
@@ -112,7 +111,7 @@ const resetPassword = (formEl) => {
 				}
 			})
 		} else {
-			console.log('error submit!')
+			confirmVisible.value=false
 		}
 	})
 }
@@ -161,12 +160,13 @@ const updateUserInfo = () => {
 		<el-aside width="200px">
 			<div class="el-aside__logo"></div>
 			<!-- element-plus的菜单标签 -->
-			<el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff"
-							v-for="auth in pathList" :key="auth.id" router>
-				<el-menu-item :index="auth.path">
+			<el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff" router>
+				<template v-for="auth in pathList">
+					<el-menu-item :index="auth.path">
 						<el-icon><component :is="getIconComponent(auth.icon)"></component></el-icon>
 						<span v-text="auth.name"></span>
-				</el-menu-item>
+					</el-menu-item>
+				</template>
 <!--				<el-menu-item index="/emp">
 					<el-icon>
 						<Management/>
@@ -207,7 +207,7 @@ const updateUserInfo = () => {
 		<el-container>
 			<!-- 头部区域 -->
 			<el-header>
-				<div><strong>{{ zhansgan }}</strong></div>
+				<div><strong>{{userInfoStore.user.name}}</strong></div>
 				<!-- 下拉菜单 -->
 				<!-- command: 条目被点击后会触发,在事件函数上可以声明一个参数,接收条目对应的指令 -->
 				<el-dropdown placement="bottom-end" @command="handleCommand">
@@ -235,7 +235,7 @@ const updateUserInfo = () => {
 		</el-container>
 	</el-container>
 	<!--+++++++++++++++++++++++++++信息会话-->
-	<el-dialog v-model="dialogUpdateUserInfoVisible" title="修改基本信息" width="500" :lock-scroll="false">
+	<el-dialog v-model="dialogUpdateUserInfoVisible" title="修改基本信息" width="500" :lock-scroll="false" >
 		<el-form :model="user">
 			<el-form-item label="名字" :label-width="60">
 				<el-input v-model="user.name" autocomplete="off"/>
@@ -283,7 +283,7 @@ const updateUserInfo = () => {
 		<template #footer>
 			<div class="dialog-footer">
 				<el-button @click="dialogResetPasswordVisible = false">取消</el-button>
-				<el-button type="primary" @click="resetPassword(ruleFormRef)">
+				<el-button  type="primary" @click="resetPassword(ruleFormRef)">
 					确认
 				</el-button>
 			</div>

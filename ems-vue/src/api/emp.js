@@ -18,6 +18,9 @@ export const empApi={
     },
     update(emp) {
         return request.put('/emp/edit', emp)
+    },
+    updateStatus(id , status){
+        return request.put(`/emp/updateStatus/${id}/${status}`)
     }
 
 }
