@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted,ref} from "vue";
 import * as echarts from 'echarts'
 import {chartsApi} from "@/api/charts.js";
 const projectMonNum=ref()

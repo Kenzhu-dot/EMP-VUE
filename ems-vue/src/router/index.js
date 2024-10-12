@@ -9,6 +9,7 @@ import Role from '@/views/Role.vue'
 import Project from '@/views/Project.vue'
 import Auth from "@/views/Auth.vue";
 import Charts from "@/views/Charts.vue";
+import Team from "@//views/Team.vue"
 
 //创建路由器
 const router = createRouter({
@@ -22,6 +23,7 @@ const router = createRouter({
                 {path:'/project' , component:Project},
                 {path:'/auth', component:Auth},
                 {path:'/charts', component:Charts},
+                {path:'team' , component:Team},
             ]
         }
     ]

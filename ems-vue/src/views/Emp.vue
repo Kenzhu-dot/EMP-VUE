@@ -3,6 +3,7 @@ import {Check, Close, Search} from "@element-plus/icons-vue";
 import {empApi} from "@/api/emp.js";
 import {ref, reactive} from "vue";
 import {ElMessage} from 'element-plus'
+import {teamApi} from "@/api/team.js";
 //更新数据操作----------------------------------------
 const empQuery = reactive({
 	name: "",
@@ -58,13 +59,21 @@ const centerDialogVisible = ref(false)
 const title = ref()
 const emp = ref({})
 //展示添加
+const team = ref([])
+const loadTeam = ()=>{
+	teamApi.selectAll().then(result => {
+		team.value=result.data
+	})
+}
 const showAdd = () => {
+	loadTeam()
 	centerDialogVisible.value = true
 	title.value = "ADD"
 	emp.value = {}
 }
 //展示编辑
 const showEdit = (id) => {
+	loadTeam()
 	centerDialogVisible.value = true
 	title.value = "EDIT"
 	emp.value = {}
@@ -154,6 +163,7 @@ const handleChangeStatus = (id , status)=>{
 					/>
 				</template>
 			</el-table-column>
+			<el-table-column prop="teamName" label="team" width="150"/>
 			<el-table-column prop="roleName" label="role" width="150"/>
 			<el-table-column prop="salary" label="Salary" width="150"/>
 			<el-table-column prop="lateRecord" label="late_record" width="150"/>
@@ -200,6 +210,15 @@ const handleChangeStatus = (id , status)=>{
 			</el-form-item>
 			<el-form-item label="Salary" :label-width="60">
 				<el-input v-model="emp.salary" autocomplete="off" />
+			</el-form-item>
+			<el-form-item label="Salary" :label-width="60">
+				<el-select v-model="emp.teamId" placeholder="Select" style="width: 240px" clearable>
+					<el-option
+							v-for="item in team"
+							:label="item.name"
+							:value="item.id"
+					/>
+				</el-select>
 			</el-form-item>
 			<el-form-item label="Leader" :label-width="60">
 				<el-input v-model="emp.leaderId" autocomplete="off" />
