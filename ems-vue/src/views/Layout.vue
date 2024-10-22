@@ -194,6 +194,12 @@ const updateUserInfo = () => {
 						</el-icon>
 						<span>INFORM</span>
 					</el-menu-item>
+					<el-menu-item index="/home/message">
+						<el-icon>
+							<message/>
+						</el-icon>
+						<span>MESSAGE</span>
+					</el-menu-item>
 					<el-menu-item index="/user/resetPassword">
 						<el-icon>
 							<EditPen/>
